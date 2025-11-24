@@ -1,6 +1,7 @@
 import type { Tool } from './_types/tool.types';
-import { Megaphone } from 'lucide-react';
+import { Megaphone, Type } from 'lucide-react';
 import { AdGeneratorTool } from './ad-generator/AdGeneratorTool';
+import { TypographyRendererTool } from './typography-renderer/TypographyRendererTool';
 
 // Registry to store all available tools
 const toolsRegistry: Tool[] = [
@@ -11,6 +12,14 @@ const toolsRegistry: Tool[] = [
         icon: Megaphone,
         component: AdGeneratorTool,
         categoryId: 'image', // Assigning to Image Generation
+    },
+    {
+        id: 'typography-renderer',
+        name: 'Typography & Material Renderer',
+        description: 'Generate text in specialized fonts made of unique materials (e.g., gold, bananas).',
+        icon: Type,
+        component: TypographyRendererTool,
+        categoryId: 'image',
     },
 ];
 
