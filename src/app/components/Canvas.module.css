@@ -1,0 +1,251 @@
+.canvas {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    /* Add the top glow effect seen in the image */
+}
+
+.canvas::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 1px;
+    background: var(--color-glow-cyan);
+    box-shadow: 0 0 25px 3px var(--color-glow-cyan);
+    opacity: 0.6;
+    z-index: 2;
+}
+
+.header {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 40px;
+    border-bottom: 1px solid var(--color-glass-border);
+    position: relative;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+}
+
+.header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+    text-shadow: 0 0 15px var(--color-glow-cyan-strong);
+    letter-spacing: 0.5px;
+}
+
+.userProfile {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.content {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+/* Refined Grid Background */
+.gridBackground {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.8;
+}
+
+/* Add stars/particles */
+.gridBackground::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(1px 1px at 20% 30%, white 100%, transparent),
+        radial-gradient(1px 1px at 40% 70%, white 100%, transparent),
+        radial-gradient(1px 1px at 60% 20%, white 100%, transparent),
+        radial-gradient(2px 2px at 80% 40%, var(--color-glow-cyan) 100%, transparent),
+        radial-gradient(2px 2px at 30% 80%, var(--color-glow-cyan) 100%, transparent);
+    background-size: 100% 100%;
+    opacity: 0.4;
+}
+
+.emptyState {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    max-width: 500px;
+}
+
+.badge {
+    padding: 10px 32px;
+    border-radius: 100px;
+    /* Pill shape */
+    background: linear-gradient(180deg, rgba(15, 23, 32, 0.8) 0%, rgba(15, 23, 32, 0.4) 100%);
+    border: 1px solid var(--color-glass-border);
+    box-shadow:
+        0 0 20px var(--color-glow-cyan-dim),
+        inset 0 0 10px rgba(0, 240, 255, 0.05);
+    color: var(--color-glow-cyan);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 10px var(--color-glow-cyan-dim);
+}
+
+.emptyTitle {
+    font-size: 32px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.addButton {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background: rgba(15, 23, 32, 0.6);
+    border: 1px solid var(--color-glow-cyan);
+    color: var(--color-glow-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow:
+        0 0 20px var(--color-glow-cyan-dim),
+        inset 0 0 20px var(--color-glow-cyan-dim);
+}
+
+.addButton:hover {
+    transform: scale(1.05);
+    background: rgba(0, 240, 255, 0.1);
+    box-shadow:
+        0 0 40px var(--color-glow-cyan-dim),
+        inset 0 0 30px var(--color-glow-cyan-dim);
+    color: #fff;
+}
+
+.categoryView {
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.toolContainer {
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.toolGrid {
+    z-index: 10;
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 20px;
+}
+
+.toolCard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    background: rgba(20, 30, 40, 0.4);
+    border: 1px solid var(--color-glass-border);
+}
+
+.toolCard:hover {
+    transform: translateY(-5px);
+    background: rgba(20, 30, 40, 0.6);
+    border-color: var(--color-glow-cyan);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--color-glow-cyan-dim);
+}
+
+.toolIconWrapper {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: rgba(0, 242, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: var(--color-glow-cyan);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+}
+
+.toolCard h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    color: var(--color-text-primary);
+}
+
+.toolCard p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+.backButton {
+    position: absolute;
+    left: 32px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.backButton:hover {
+    color: var(--color-glow-cyan);
+}
+
+.emptyCategory {
+    z-index: 10;
+    color: var(--color-text-secondary);
+    font-size: 16px;
+}
