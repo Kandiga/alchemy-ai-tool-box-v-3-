@@ -10,6 +10,8 @@ export const TypographyRendererTool: React.FC = () => {
         material: 'Gold',
         background: '',
         aspectRatio: '1:1',
+        imageSize: '1K',
+        thinkingLevel: 'HIGH',
         apiKey: ''
     });
     const [isGenerating, setIsGenerating] = useState(false);
@@ -21,29 +23,23 @@ export const TypographyRendererTool: React.FC = () => {
         setError(null);
         setResult(null);
 
-        // Construct the prompt
-        const prompt = `Create a high-quality 3D render of the word "${input.text}" written in a ${input.fontStyle} font made of ${input.material}. ${input.background ? 'The background is ' + input.background : 'Isolated on a clean, neutral background'}. The lighting should highlight the texture of the ${input.material}. Highly detailed, photorealistic.`;
+        // Construct a narrative prompt for better material blending (Gemini 3.0 best practice)
+        const prompt = `A photorealistic high-fidelity 3D render of the word "${input.text}". The letters are formed using a ${input.fontStyle} typography style, constructed entirely out of ${input.material}. The texture of the ${input.material} is highly detailed, showing realistic surface properties. The background features ${input.background || 'a neutral, clean studio setting to emphasize the text'}. The lighting is cinematic, accentuating the material's depth and form.`;
 
         try {
-            // Check if API key is provided, otherwise simulate or error
-            // For this demo, if no key is provided, we will show a mock response or error if we want strict mode.
-            // But to be helpful, let's try to fetch if key is present, or mock if not.
-
             if (!input.apiKey) {
                 // Mock behavior if no API key
                 await new Promise((resolve) => setTimeout(resolve, 2000));
 
-                // Return a placeholder image since we can't really generate without API
-                // But let's just create a dummy result for the UI
                 setResult({
-                    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80', // Abstract 3D art placeholder
-                    promptUsed: prompt + " (SIMULATED)"
+                    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+                    promptUsed: prompt + " (SIMULATED - No API Key)"
                 });
                 setIsGenerating(false);
                 return;
             }
 
-            // Real API call to Gemini
+            // Real API call to Gemini 3.0 Pro Image Preview
             const response = await fetch(
                 `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key=${input.apiKey}`,
                 {
@@ -58,8 +54,11 @@ export const TypographyRendererTool: React.FC = () => {
                         generationConfig: {
                             responseModalities: ["Image"],
                             imageConfig: {
-                                aspectRatio: input.aspectRatio
+                                aspectRatio: input.aspectRatio,
+                                imageSize: input.imageSize // Enforce 1K/2K/4K enum
                             }
+                            // Note: thinking_level is "high" by default for this model and usually cannot be disabled.
+                            // We can try sending it if needed, but default is safer for now given API variability.
                         }
                     })
                 }
@@ -72,10 +71,7 @@ export const TypographyRendererTool: React.FC = () => {
 
             const data = await response.json();
 
-            // Extract image data
-            // The response structure for images is candidates[0].content.parts[0].inlineData.data (base64)
             const candidate = data.candidates?.[0];
-            // Find the part that contains the image data
             const part = candidate?.content?.parts?.find((p: any) => p.inlineData);
 
             if (part?.inlineData?.data) {
@@ -152,23 +148,38 @@ export const TypographyRendererTool: React.FC = () => {
                     />
                 </div>
 
-                <div className={styles.formGroup}>
-                    <label className={styles.label}>Aspect Ratio</label>
-                    <select
-                        className={styles.select}
-                        value={input.aspectRatio}
-                        onChange={(e) => setInput({ ...input, aspectRatio: e.target.value })}
-                    >
-                        <option value="1:1">1:1 (Square)</option>
-                        <option value="16:9">16:9 (Landscape)</option>
-                        <option value="9:16">9:16 (Portrait)</option>
-                        <option value="4:3">4:3</option>
-                        <option value="3:4">3:4</option>
-                    </select>
+                <div className={styles.row}>
+                    <div className={styles.formGroup} style={{ flex: 1 }}>
+                        <label className={styles.label}>Aspect Ratio</label>
+                        <select
+                            className={styles.select}
+                            value={input.aspectRatio}
+                            onChange={(e) => setInput({ ...input, aspectRatio: e.target.value })}
+                        >
+                            <option value="1:1">1:1 (Square)</option>
+                            <option value="16:9">16:9 (Landscape)</option>
+                            <option value="9:16">9:16 (Portrait)</option>
+                            <option value="4:3">4:3</option>
+                            <option value="3:4">3:4</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.formGroup} style={{ flex: 1 }}>
+                        <label className={styles.label}>Resolution</label>
+                        <select
+                            className={styles.select}
+                            value={input.imageSize}
+                            onChange={(e) => setInput({ ...input, imageSize: e.target.value as any })}
+                        >
+                            <option value="1K">1K</option>
+                            <option value="2K">2K (High)</option>
+                            <option value="4K">4K (Ultra)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div className={styles.formGroup}>
-                    <label className={styles.label}>Gemini API Key (Optional for Mock)</label>
+                    <label className={styles.label}>Gemini API Key</label>
                     <input
                         type="password"
                         className={styles.input}
@@ -177,7 +188,7 @@ export const TypographyRendererTool: React.FC = () => {
                         placeholder="Enter API Key"
                     />
                     <p style={{fontSize: '0.7rem', color: '#64748b'}}>
-                        Without API key, a mock image will be shown.
+                        Required for image generation.
                     </p>
                 </div>
 
